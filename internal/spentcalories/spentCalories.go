@@ -70,23 +70,21 @@ func TrainingInfo(data string, weight, height float64) string {
 	if err != nil { // Проверка на ошибки
 		return fmt.Sprintf("Ошибка при получении данных: %v\n", err)
 	}
+	distanceInKm := distance(steps)
+	speed := meanSpeed(steps, duration)
+	var spentCalories float64 // Вынес переменные за "switch", и убрал дублирование кода
 
 	switch activity { // Проверяем вид активности
 	case "Бег":
-		distanceInKm := distance(steps)
-		speed := meanSpeed(steps, duration)
-		spentCalories := RunningSpentCalories(steps, weight, duration)
-		durationInHours := duration.Hours() // Вычисляем все нужные данные по ТЗ
-		return fmt.Sprintf(" Тип тренировки: %s\n Длительность: %.2f.\n Дистанция: %.2f.\n Скорость: %.2f км/ч\n Сожгли калорий: %.2f\n", activity, durationInHours, distanceInKm, speed, spentCalories)
+		spentCalories = RunningSpentCalories(steps, weight, duration)
 
 	case "Ходьба":
-		distanceInKm := distance(steps)
-		speed := meanSpeed(steps, duration)
-		spentCalories := WalkingSpentCalories(steps, weight, height, duration)
-		durationInHours := duration.Hours() // Вычисляем все нужные данные по ТЗ
-		return fmt.Sprintf(" Тип тренировки: %s\n Длительность: %.2f.\n Дистанция: %.2f.\n Скорость: %.2f км/ч\n Сожгли калорий: %.2f\n", activity, durationInHours, distanceInKm, speed, spentCalories)
+		spentCalories = WalkingSpentCalories(steps, weight, height, duration)
+
+	default:
+		fmt.Println("Неизвестный тип тренировки")
 	}
-	return "Неизвестный тип тренировки\n"
+	return fmt.Sprintf(" Тип тренировки: %s\n Длительность: %.2f.\n Дистанция: %.2f.\n Скорость: %.2f км/ч\n Сожгли калорий: %.2f\n", activity, duration.Hours(), distanceInKm, speed, spentCalories)
 }
 
 // Константы для расчета калорий, расходуемых при беге.
